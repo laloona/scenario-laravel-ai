@@ -121,7 +121,7 @@ Scenario Laravel AI uses the Parameter Type blueprint and framework documentatio
 
 Generated implementations can include methods such as:
 
-- `constraints()` – Converts the supplied value into the required representation.
+- `rules()` – Converts the supplied value into the required representation.
 - `valueType()` – Defines the supported input value type.
 
 As with Scenarios, generated Parameter Types must be reviewed before activation.
