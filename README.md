@@ -43,7 +43,7 @@ The developer remains responsible for reviewing and approving the generated impl
 ## Requirements
 
 Stateforge Scenario AI requires an existing Stateforge Scenario Laravel installation:
-- [stateforge/scenario-Laravel](https://github.com/laloona/scenario-laravel) >= 1.2
+- [stateforge/scenario-laravel](https://github.com/laloona/scenario-laravel) >= 1.2
 
 The Scenario AI extension uses the framework's configuration, Scenario suites, Parameter Type directory, and extension system.
 
