@@ -33,15 +33,15 @@
   "autoload": {
     "psr-4": {
       "Stateforge\\Scenario\\LaravelAi\\": "src/"
-    },
-    "classmap": [
-      "tests/files"
-    ]
+    }
   },
   "autoload-dev": {
     "psr-4": {
       "Stateforge\\Scenario\\LaravelAi\\Tests\\Unit\\": "tests/unit/"
-    }
+    },
+    "classmap": [
+      "tests/files"
+    ]
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
