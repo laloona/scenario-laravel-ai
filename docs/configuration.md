@@ -9,7 +9,7 @@ The configuration defines how Scenario Laravel AI uses project data and which AI
 
 Scenario AI uses two configuration files:
 
-- `scenario.xml` – Defines the Scenario framework configuration, including suites, directories, and extensions. (see [stateforge/scenario-Laravel](https://github.com/laloona/scenario-laravel))
+- `scenario.xml` – Defines the Scenario framework configuration, including suites, directories, and extensions. (see [stateforge/scenario-laravel](https://github.com/laloona/scenario-laravel))
 - `scenario-ai.xml` – Defines the AI adapter and AI-specific settings.
 
 Generate the `scenario-ai.xml` configuration file:
