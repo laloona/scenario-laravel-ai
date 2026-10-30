@@ -27,7 +27,7 @@
   },
   "require": {
     "php": ">=8.2",
-    "stateforge/scenario-laravel": "~1.2-dev",
+    "stateforge/scenario-laravel": "~1.2",
     "stateforge/scenario-ai": "~1.0-dev"
   },
   "autoload": {
