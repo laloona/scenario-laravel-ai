@@ -25,7 +25,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, json, libxml, mbstring, xml, xmlwriter
+          extensions: dom, json, libxml, mbstring, xml, xmlwriter, fileinfo
           coverage: none
           tools: composer:v2
 
@@ -69,7 +69,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, json, libxml, mbstring, xml, xmlwriter
+          extensions: dom, json, libxml, mbstring, xml, xmlwriter, fileinfo
           coverage: none
           tools: composer:v2
 
@@ -125,7 +125,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, json, libxml, mbstring, xml, xmlwriter
+          extensions: dom, json, libxml, mbstring, xml, xmlwriter, fileinfo
           coverage: xdebug
           tools: composer:v2
 
@@ -138,10 +138,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ matrix.php }}-${{ matrix.dependencies }}-composer-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-branch-${{ matrix.branch }}-php-${{ matrix.php }}-${{ matrix.dependencies }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
-            ${{ runner.os }}-branch-php-${{ matrix.php }}-${{ matrix.dependencies }}-composer-
-            ${{ runner.os }}-branch-php-${{ matrix.php }}-composer-
+            ${{ runner.os }}-branch-${{ matrix.branch }}-php-${{ matrix.php }}-${{ matrix.dependencies }}-composer-
+            ${{ runner.os }}-branch-${{ matrix.branch }}-php-${{ matrix.php }}-composer-
+            ${{ runner.os }}-branch-${{ matrix.branch }}-composer-
             ${{ runner.os }}-composer-
 
       - name: Validate composer.json
@@ -163,7 +164,7 @@ jobs:
 
       - name: Upload coverage artifact
         if: matrix.dependencies == 'highest' && matrix.os == 'ubuntu-latest' && matrix.php == '8.4'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ matrix.os }}-php-${{ matrix.php }}-${{ matrix.dependencies }}
           path: |
