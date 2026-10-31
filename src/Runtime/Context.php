@@ -11,6 +11,7 @@
 
 namespace Stateforge\Scenario\LaravelAi\Runtime;
 
+use Illuminate\Foundation\Application as Laravel;
 use LogicException;
 use Stateforge\Scenario\Ai\Contract\AiContext;
 use Stateforge\Scenario\Ai\Runtime\Adapter\AiRequest;
@@ -30,6 +31,7 @@ use Stateforge\Scenario\Core\Attribute\AsScenario;
 use Stateforge\Scenario\Core\Runtime\Application;
 use Stateforge\Scenario\Laravel\ParameterTypeDefinition;
 use Stateforge\Scenario\Laravel\Scenario;
+use Stateforge\Scenario\LaravelAi\Runtime\Instruction\LaravelVersion;
 use const DIRECTORY_SEPARATOR;
 
 final class Context implements AiContext
@@ -60,6 +62,7 @@ final class Context implements AiContext
                 $aiConfig->allowProjectInformation,
             ),
         );
+        $instructions->add(new LaravelVersion(Laravel::VERSION));
         $instructions->add(new ClassInstruction('Base class definitions', [ Scenario::class, ParameterTypeDefinition::class ]));
         $instructions->add(
             new BlueprintInstruction(
