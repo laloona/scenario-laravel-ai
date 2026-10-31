@@ -32,6 +32,7 @@ use Stateforge\Scenario\Core\Runtime\Application\Configuration\Configuration as 
 use Stateforge\Scenario\Core\Runtime\Application\Configuration\Value\SuiteValue;
 use Stateforge\Scenario\LaravelAi\Command\ScenarioAiMakeCommand;
 use Stateforge\Scenario\LaravelAi\Runtime\Context;
+use Stateforge\Scenario\LaravelAi\Runtime\Instruction\LaravelVersion;
 use Stateforge\Scenario\LaravelAi\Tests\Files\SharedProjectClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -46,6 +47,7 @@ use const PHP_EOL;
 
 #[CoversClass(ScenarioAiMakeCommand::class)]
 #[UsesClass(Context::class)]
+#[UsesClass(LaravelVersion::class)]
 #[Group('command')]
 #[Small]
 final class ScenarioAiMakeCommandTest extends CommandTestCase
