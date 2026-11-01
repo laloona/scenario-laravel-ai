@@ -11,7 +11,8 @@
 
 namespace Stateforge\Scenario\LaravelAi\Runtime\Instruction;
 
-use Stateforge\Scenario\Ai\Runtime\Instruction\Instruction;
+use Stateforge\Scenario\Ai\Contract\Instruction;
+use Stateforge\Scenario\Ai\Runtime\AdapterMode;
 use function sprintf;
 
 final class LaravelVersion implements Instruction
@@ -21,7 +22,7 @@ final class LaravelVersion implements Instruction
     ) {
     }
 
-    public function instruct(): string
+    public function instruct(AdapterMode $mode): string
     {
         return sprintf(
             'Generate code compatible with Laravel %s',

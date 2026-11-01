@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\TestCase;
+use Stateforge\Scenario\Ai\Runtime\AdapterMode;
 use Stateforge\Scenario\LaravelAi\Runtime\Instruction\LaravelVersion;
 
 #[CoversClass(LaravelVersion::class)]
@@ -26,7 +27,7 @@ final class LaravelVersionTest extends TestCase
     #[DataProvider('versions')]
     public function testInstructIncludesTheProvidedLaravelVersion(string $version, string $expected): void
     {
-        self::assertSame($expected, (new LaravelVersion($version))->instruct());
+        self::assertSame($expected, (new LaravelVersion($version))->instruct(AdapterMode::Cli));
     }
 
     /**

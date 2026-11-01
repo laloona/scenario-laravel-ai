@@ -25,6 +25,7 @@ use Stateforge\Scenario\Ai\Runtime\Adapter\AiRequest;
 use Stateforge\Scenario\Ai\Runtime\Adapter\AiResponse;
 use Stateforge\Scenario\Ai\Runtime\Adapter\GenerationType;
 use Stateforge\Scenario\Ai\Runtime\AdapterConfiguration;
+use Stateforge\Scenario\Ai\Runtime\AdapterMode;
 use Stateforge\Scenario\Ai\Runtime\Ai;
 use Stateforge\Scenario\Ai\Runtime\Configuration;
 use Stateforge\Scenario\Ai\Runtime\SourceCodeRegistry;
@@ -76,7 +77,7 @@ final class ScenarioAiMakeCommandTest extends CommandTestCase
             null,
             false,
             3,
-            new AdapterConfiguration('local-test', null, null, []),
+            new AdapterConfiguration(AdapterMode::All, 'local-test', null, null, []),
         ));
         // Never allow Ai::registry() to initialize the real API adapters.
         $ai->getProperty('registry')->setValue(null, new AdapterRegistry());
@@ -230,7 +231,7 @@ final class ScenarioAiMakeCommandTest extends CommandTestCase
             $projectDoc,
             false,
             $limit,
-            new AdapterConfiguration('local-test', null, null, []),
+            new AdapterConfiguration(AdapterMode::All, 'local-test', null, null, []),
         ));
         $client = $this->createMock(AiClient::class);
         $client->expects(self::exactly(count($responses)))->method('request')->willReturnCallback(

@@ -15,6 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\TestCase;
+use Stateforge\Scenario\Ai\Runtime\AdapterMode;
 use Stateforge\Scenario\LaravelAi\Runtime\Instruction\ParameterImplementationInstruction;
 
 #[CoversClass(ParameterImplementationInstruction::class)]
@@ -24,7 +25,7 @@ final class ParameterImplementationInstructionTest extends TestCase
 {
     public function testUsesInheritedCastAndLaravelValidationRules(): void
     {
-        $text = (new ParameterImplementationInstruction())->instruct();
+        $text = (new ParameterImplementationInstruction())->instruct(AdapterMode::Cli);
 
         self::assertStringContainsString('The Laravel ParameterTypeDefinition base class already provides a final cast() method.', $text);
         self::assertStringContainsString('Never override or reimplement cast().', $text);
@@ -35,7 +36,7 @@ final class ParameterImplementationInstructionTest extends TestCase
 
     public function testRequiresCompatibleValueTypeInstances(): void
     {
-        $text = (new ParameterImplementationInstruction())->instruct();
+        $text = (new ParameterImplementationInstruction())->instruct(AdapterMode::Cli);
 
         self::assertStringContainsString('The valueType() method MUST return an instance of the appropriate ValueType class.', $text);
         self::assertStringContainsString('NEVER return a class name string from valueType().', $text);
@@ -45,7 +46,7 @@ final class ParameterImplementationInstructionTest extends TestCase
 
     public function testRequestsMissingInformationInsteadOfGeneratingPlaceholderCode(): void
     {
-        $text = (new ParameterImplementationInstruction())->instruct();
+        $text = (new ParameterImplementationInstruction())->instruct(AdapterMode::Cli);
 
         self::assertStringContainsString('Never replace required validation or conversion logic with placeholder comments.', $text);
         self::assertStringContainsString('If implementation requires unavailable project-specific dependencies, request the necessary information.', $text);
