@@ -34,10 +34,7 @@ final class ScenarioLaravelAiServiceProvider extends ServiceProvider
             return;
         }
 
-        $commands = [
-            ScenarioAiConfigCommand::class,
-        ];
-
+        $commands = [];
         try {
             $config = Ai::config();
             if ($config->adapter->mode !== AdapterMode::Skill) {
@@ -47,6 +44,11 @@ final class ScenarioLaravelAiServiceProvider extends ServiceProvider
                 $commands[] = ScenarioAiSkillCommand::class;
             }
         } catch (Throwable $exception) {
+            $commands[] = ScenarioAiConfigCommand::class;
+        }
+
+        if (count($commands) === 0) {
+            return;
         }
 
         $this->commands($commands);
