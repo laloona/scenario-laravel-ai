@@ -18,6 +18,7 @@ use Stateforge\Scenario\Ai\Runtime\Ai;
 use Stateforge\Scenario\LaravelAi\Command\ScenarioAiConfigCommand;
 use Stateforge\Scenario\LaravelAi\Command\ScenarioAiMakeCommand;
 use Stateforge\Scenario\LaravelAi\Command\ScenarioAiSkillCommand;
+use Throwable;
 
 final class ScenarioLaravelAiServiceProvider extends ServiceProvider
 {
@@ -37,12 +38,15 @@ final class ScenarioLaravelAiServiceProvider extends ServiceProvider
             ScenarioAiConfigCommand::class,
         ];
 
-        $config = Ai::config();
-        if ($config->adapter->mode !== AdapterMode::Skill) {
-            $commands[] = ScenarioAiMakeCommand::class;
-        }
-        if ($config->adapter->mode !== AdapterMode::Cli) {
-            $commands[] = ScenarioAiSkillCommand::class;
+        try {
+            $config = Ai::config();
+            if ($config->adapter->mode !== AdapterMode::Skill) {
+                $commands[] = ScenarioAiMakeCommand::class;
+            }
+            if ($config->adapter->mode !== AdapterMode::Cli) {
+                $commands[] = ScenarioAiSkillCommand::class;
+            }
+        } catch (Throwable $exception) {
         }
 
         $this->commands($commands);
