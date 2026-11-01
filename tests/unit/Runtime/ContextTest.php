@@ -50,7 +50,6 @@ use const DIRECTORY_SEPARATOR;
 #[CoversClass(Context::class)]
 #[UsesClass(LaravelVersion::class)]
 #[UsesClass(ParameterImplementationInstruction::class)]
-#[UsesClass(ClassDoesNotExistException::class)]
 #[Group('runtime')]
 #[Small]
 final class ContextTest extends TestCase
@@ -185,7 +184,6 @@ final class ContextTest extends TestCase
 
     public function testValidatorRejectsMissingClassesBeforeCheckingGeneratedCode(): void
     {
-        // @phpstan-ignore argument.type (Intentionally invalid class reference from AI.)
         $response = new AiResponse('id', '<?php class {', GenerationType::Scenario, null, ['Missing\RequestedClass'], null);
         $this->expectException(ClassDoesNotExistException::class);
         $this->expectExceptionMessage('class "Missing\RequestedClass" does not exist.');
@@ -195,7 +193,6 @@ final class ContextTest extends TestCase
 
     public function testValidatorRejectsMissingMatchWithoutGeneratedCode(): void
     {
-        // @phpstan-ignore argument.type (Intentionally invalid match reference from AI.)
         $response = new AiResponse('id', null, GenerationType::Scenario, null, [], 'Missing\MatchingClass');
         $this->expectException(ClassDoesNotExistException::class);
         $this->expectExceptionMessage('class "Missing\MatchingClass" does not exist.');
