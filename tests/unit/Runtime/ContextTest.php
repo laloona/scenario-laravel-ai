@@ -26,6 +26,7 @@ use Stateforge\Scenario\Ai\Runtime\AdapterConfiguration;
 use Stateforge\Scenario\Ai\Runtime\Ai;
 use Stateforge\Scenario\Ai\Runtime\Configuration;
 use Stateforge\Scenario\Ai\Runtime\Exception\AttributeValidatorException;
+use Stateforge\Scenario\Ai\Runtime\Exception\ClassDoesNotExistException;
 use Stateforge\Scenario\Ai\Runtime\Exception\InheritanceValidatorException;
 use Stateforge\Scenario\Ai\Runtime\Validation\Validators;
 use Stateforge\Scenario\Core\Attribute\AsScenario;
@@ -49,6 +50,7 @@ use const DIRECTORY_SEPARATOR;
 #[CoversClass(Context::class)]
 #[UsesClass(LaravelVersion::class)]
 #[UsesClass(ParameterImplementationInstruction::class)]
+#[UsesClass(ClassDoesNotExistException::class)]
 #[Group('runtime')]
 #[Small]
 final class ContextTest extends TestCase
@@ -179,6 +181,36 @@ final class ContextTest extends TestCase
         $this->expectException(InheritanceValidatorException::class);
 
         (new Context())->validator()->validate(new AiResponse(null, $code, GenerationType::from($type), null, [], null));
+    }
+
+    public function testValidatorRejectsMissingClassesBeforeCheckingGeneratedCode(): void
+    {
+        // @phpstan-ignore argument.type (Intentionally invalid class reference from AI.)
+        $response = new AiResponse('id', '<?php class {', GenerationType::Scenario, null, ['Missing\RequestedClass'], null);
+        $this->expectException(ClassDoesNotExistException::class);
+        $this->expectExceptionMessage('class "Missing\RequestedClass" does not exist.');
+
+        (new Context())->validator()->validate($response);
+    }
+
+    public function testValidatorRejectsMissingMatchWithoutGeneratedCode(): void
+    {
+        // @phpstan-ignore argument.type (Intentionally invalid match reference from AI.)
+        $response = new AiResponse('id', null, GenerationType::Scenario, null, [], 'Missing\MatchingClass');
+        $this->expectException(ClassDoesNotExistException::class);
+        $this->expectExceptionMessage('class "Missing\MatchingClass" does not exist.');
+
+        (new Context())->validator()->validate($response);
+    }
+
+    public function testValidatorAcceptsExistingClassReferencesWithoutGeneratedCode(): void
+    {
+        $response = new AiResponse('id', null, GenerationType::Scenario, null, [self::class], self::class);
+
+        (new Context())->validator()->validate($response);
+
+        self::assertSame([self::class], $response->classes);
+        self::assertSame(self::class, $response->match);
     }
 
     /** @return array<string, array{string, string, string}> */

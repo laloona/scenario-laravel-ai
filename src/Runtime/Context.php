@@ -24,12 +24,16 @@ use Stateforge\Scenario\Ai\Runtime\Instruction\Instruction;
 use Stateforge\Scenario\Ai\Runtime\Instruction\Instructions;
 use Stateforge\Scenario\Ai\Runtime\Instruction\ParameterBlueprintInstruction;
 use Stateforge\Scenario\Ai\Runtime\Instruction\ScenarioBlueprintInstruction;
+use Stateforge\Scenario\Ai\Runtime\Validation\ClassValidator;
 use Stateforge\Scenario\Ai\Runtime\Validation\CodeValidator;
 use Stateforge\Scenario\Ai\Runtime\Validation\Validator;
 use Stateforge\Scenario\Ai\Runtime\Validation\Validators;
 use Stateforge\Scenario\Core\Attribute\AsParameterType;
 use Stateforge\Scenario\Core\Attribute\AsScenario;
+use Stateforge\Scenario\Core\Contract\ScenarioInterface;
+use Stateforge\Scenario\Core\ParameterTypeDefinition as CoreParameterTypeDefinition;
 use Stateforge\Scenario\Core\Runtime\Application;
+use Stateforge\Scenario\Core\Scenario as CoreScenario;
 use Stateforge\Scenario\Laravel\ParameterTypeDefinition;
 use Stateforge\Scenario\Laravel\Scenario;
 use Stateforge\Scenario\LaravelAi\Runtime\Instruction\LaravelVersion;
@@ -65,7 +69,13 @@ final class Context implements AiContext
             ),
         );
         $instructions->add(new LaravelVersion(Laravel::VERSION));
-        $instructions->add(new ClassInstruction('Base class definitions', [ Scenario::class, ParameterTypeDefinition::class ]));
+        $instructions->add(new ClassInstruction('Base class definitions', [
+            Scenario::class,
+            ParameterTypeDefinition::class,
+            CoreScenario::class,
+            ScenarioInterface::class,
+            CoreParameterTypeDefinition::class,
+        ]));
         $instructions->add(
             new BlueprintInstruction(
                 new ScenarioBlueprintInstruction(
@@ -87,6 +97,7 @@ final class Context implements AiContext
     public function validator(): Validator
     {
         $validators = new Validators();
+        $validators->add(new ClassValidator());
         $validators->add(new CodeValidator(
             Scenario::class,
             AsScenario::class,
