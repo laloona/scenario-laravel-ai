@@ -38,6 +38,7 @@ use Stateforge\Scenario\Core\Runtime\ScenarioRegistry;
 use Stateforge\Scenario\Laravel\Scenario;
 use Stateforge\Scenario\LaravelAi\Runtime\Context;
 use Stateforge\Scenario\LaravelAi\Runtime\Instruction\LaravelVersion;
+use Stateforge\Scenario\LaravelAi\Runtime\Instruction\ParameterImplementationInstruction;
 use Symfony\Component\Filesystem\Filesystem;
 use function file_put_contents;
 use function str_replace;
@@ -47,6 +48,7 @@ use const DIRECTORY_SEPARATOR;
 
 #[CoversClass(Context::class)]
 #[UsesClass(LaravelVersion::class)]
+#[UsesClass(ParameterImplementationInstruction::class)]
 #[Group('runtime')]
 #[Small]
 final class ContextTest extends TestCase
@@ -115,6 +117,9 @@ final class ContextTest extends TestCase
         self::assertStringContainsString('Laravel framework documentation marker', $text);
         self::assertStringContainsString('Laravel scenario blueprint marker', $text);
         self::assertStringContainsString('Laravel parameter blueprint marker', $text);
+        self::assertMatchesRegularExpression('/Laravel parameter blueprint marker[\s\S]*ParameterType Implementation Rules[\s\S]*Final Validation/', $text);
+        self::assertStringContainsString('Never override or reimplement cast().', $text);
+        self::assertStringNotContainsString('The cast() method MUST implement the requested validation and conversion behavior.', $text);
         self::assertStringContainsString('name: main, description: Main Laravel suite, directory: scenario/main, namespace: Scenario\\Main', $text);
         self::assertStringContainsString('directory: scenario/parameter, namespace: Scenario\\Parameter', $text);
         self::assertStringContainsString('Maximum clarification questions: 7', $text);
@@ -153,7 +158,7 @@ final class ContextTest extends TestCase
         $validator = (new Context())->validator();
         self::assertInstanceOf(Validators::class, $validator);
 
-        $validator->validate(new AiResponse(null, $code, GenerationType::from($type), null, []));
+        $validator->validate(new AiResponse(null, $code, GenerationType::from($type), null, [], null));
     }
 
     #[DataProvider('generationProvider')]
@@ -163,7 +168,7 @@ final class ContextTest extends TestCase
         $this->expectException(AttributeValidatorException::class);
         $this->expectExceptionMessage('Missing required attribute "' . $attribute . '".');
 
-        (new Context())->validator()->validate(new AiResponse(null, $code, GenerationType::from($type), null, []));
+        (new Context())->validator()->validate(new AiResponse(null, $code, GenerationType::from($type), null, [], null));
     }
 
     #[DataProvider('generationProvider')]
@@ -173,7 +178,7 @@ final class ContextTest extends TestCase
         $code = '<?php #[\\' . $attribute . '] class Generated extends \\' . $coreParent . ' {}';
         $this->expectException(InheritanceValidatorException::class);
 
-        (new Context())->validator()->validate(new AiResponse(null, $code, GenerationType::from($type), null, []));
+        (new Context())->validator()->validate(new AiResponse(null, $code, GenerationType::from($type), null, [], null));
     }
 
     /** @return array<string, array{string, string, string}> */

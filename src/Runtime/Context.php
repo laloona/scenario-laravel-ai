@@ -18,6 +18,7 @@ use Stateforge\Scenario\Ai\Runtime\Adapter\AiRequest;
 use Stateforge\Scenario\Ai\Runtime\Ai;
 use Stateforge\Scenario\Ai\Runtime\Instruction\BlueprintInstruction;
 use Stateforge\Scenario\Ai\Runtime\Instruction\ClassInstruction;
+use Stateforge\Scenario\Ai\Runtime\Instruction\FinalValidationInstruction;
 use Stateforge\Scenario\Ai\Runtime\Instruction\GeneralInstructions;
 use Stateforge\Scenario\Ai\Runtime\Instruction\Instruction;
 use Stateforge\Scenario\Ai\Runtime\Instruction\Instructions;
@@ -32,6 +33,7 @@ use Stateforge\Scenario\Core\Runtime\Application;
 use Stateforge\Scenario\Laravel\ParameterTypeDefinition;
 use Stateforge\Scenario\Laravel\Scenario;
 use Stateforge\Scenario\LaravelAi\Runtime\Instruction\LaravelVersion;
+use Stateforge\Scenario\LaravelAi\Runtime\Instruction\ParameterImplementationInstruction;
 use const DIRECTORY_SEPARATOR;
 
 final class Context implements AiContext
@@ -76,6 +78,8 @@ final class Context implements AiContext
                 ),
             ),
         );
+        $instructions->add(new ParameterImplementationInstruction());
+        $instructions->add(new FinalValidationInstruction());
 
         return $instructions;
     }
