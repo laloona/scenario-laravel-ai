@@ -27,6 +27,7 @@ use Stateforge\Scenario\Ai\Runtime\Adapter\GenerationType;
 use Stateforge\Scenario\Ai\Runtime\AdapterConfiguration;
 use Stateforge\Scenario\Ai\Runtime\Ai;
 use Stateforge\Scenario\Ai\Runtime\Configuration;
+use Stateforge\Scenario\Ai\Runtime\SourceCodeRegistry;
 use Stateforge\Scenario\Core\Runtime\Application;
 use Stateforge\Scenario\Core\Runtime\Application\Configuration\Configuration as CoreConfiguration;
 use Stateforge\Scenario\Core\Runtime\Application\Configuration\Value\SuiteValue;
@@ -60,6 +61,7 @@ final class ScenarioAiMakeCommandTest extends CommandTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->resetSourceCodeRegistry();
         $this->requests = [];
         $configuration = self::createStub(CoreConfiguration::class);
         $configuration->method('getSuites')->willReturn([
@@ -82,6 +84,7 @@ final class ScenarioAiMakeCommandTest extends CommandTestCase
 
     protected function tearDown(): void
     {
+        $this->resetSourceCodeRegistry();
         $core = new ReflectionClass(Application::class);
         $core->getProperty('rootDir')->setValue(null, null);
         $core->getProperty('configuration')->setValue(null, null);
@@ -248,6 +251,14 @@ final class ScenarioAiMakeCommandTest extends CommandTestCase
         $registry = new AdapterRegistry();
         $registry->register('local-test', $adapter);
         (new ReflectionClass(Ai::class))->getProperty('registry')->setValue(null, $registry);
+    }
+
+    private function resetSourceCodeRegistry(): void
+    {
+        // Older supported AI versions do not maintain this registry.
+        if (class_exists(SourceCodeRegistry::class)) {
+            (new ReflectionClass(SourceCodeRegistry::class))->getProperty('classes')->setValue(null, []);
+        }
     }
 
     private function generatedResponse(string $type = 'scenario'): AiResponse
