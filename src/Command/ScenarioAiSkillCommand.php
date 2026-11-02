@@ -22,7 +22,7 @@ final class ScenarioAiSkillCommand extends ScenarioCommand
 {
     protected $signature = 'scenario:ai:skill';
 
-    protected $description = 'Makes a skill for AI usage (local/develop/testing only)';
+    protected $description = 'Generate a skill IDE-ready skill for AI (local/develop/testing only)';
 
     protected function executeCommand(): int
     {

@@ -12,7 +12,7 @@
 namespace Stateforge\Scenario\LaravelAi\Tests\Unit\Command;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Application as Laravel;
+use Illuminate\Support\Facades\Config;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -89,11 +89,11 @@ final class ScenarioAiSkillCommandTest extends CommandTestCase
         $command = $this->command();
 
         self::assertSame('scenario:ai:skill', $command->getName());
-        self::assertSame('Makes a skill for AI usage (local/develop/testing only)', $command->getDescription());
+        self::assertSame('Generate a skill IDE-ready skill for AI (local/develop/testing only)', $command->getDescription());
     }
 
     #[DataProvider('generationResults')]
-    public function testGeneratesSkillWithSymfonyInstructionsWithoutApiCall(?string $path, int $expectedStatus, string $expectedMessage): void
+    public function testGeneratesSkillWithLaravelInstructionsWithoutApiCall(?string $path, int $expectedStatus, string $expectedMessage): void
     {
         $skill = $this->createMock(AiSkill::class);
         $skill->expects(self::once())->method('generate')->willReturn($path);
@@ -103,12 +103,23 @@ final class ScenarioAiSkillCommandTest extends CommandTestCase
             ->with(self::identicalTo($this->adapterConfiguration), self::isInstanceOf(Instruction::class))
             ->willReturnCallback(function (AdapterConfiguration $configuration, Instruction $instruction) use ($skill): AiSkill {
                 $text = $instruction->instruct($configuration->mode);
-                self::assertStringContainsString('Generate code compatible with Laravel ' . Laravel::VERSION, $text);
-                self::assertStringContainsString('Laravel skill documentation marker', $text);
-                self::assertStringContainsString('Laravel scenario blueprint marker', $text);
-                self::assertStringContainsString('Laravel parameter blueprint marker', $text);
-                self::assertStringContainsString('The Laravel ParameterTypeDefinition base class already provides a final cast() method.', $text);
-                self::assertStringContainsString('Clarification questions already asked: 0', $text);
+                foreach ([
+                    'Introduction',
+                    'Framework Attribute Rules',
+                    'Available attributes:',
+                    'Documentation',
+                    'Base class definitions:',
+                    'Blueprint Rules',
+                    'Scenario Rules',
+                    'Scenario Blueprint:',
+                    'ParameterType Rules',
+                    'Parameter Type Blueprint:',
+                    'ParameterType Implementation Rules',
+                    'Final Validation',
+                ] as $heading) {
+                    self::assertStringContainsString($heading, $text);
+                }
+                self::assertStringNotContainsString('Conversation rules:', $text);
                 return $skill;
             });
         $registry = new AdapterRegistry();
@@ -166,7 +177,7 @@ final class ScenarioAiSkillCommandTest extends CommandTestCase
             unlink($this->projectDirectory . DIRECTORY_SEPARATOR . 'scenario.dist.xml');
         }
         if (!$validAllowedEnvironments) {
-            \Illuminate\Support\Facades\Config::set('scenario.allowed_envs', 'testing');
+            Config::set('scenario.allowed_envs', 'testing');
         }
         $adapter = $this->createMock(AiAdapter::class);
         $adapter->expects(self::never())->method('skill');

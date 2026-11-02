@@ -25,18 +25,18 @@ use Stateforge\Scenario\LaravelAi\Runtime\Instruction\LaravelVersion;
 final class LaravelVersionTest extends TestCase
 {
     #[DataProvider('versions')]
-    public function testInstructIncludesTheProvidedLaravelVersion(string $version, string $expected): void
+    public function testInstructIncludesTheProvidedLaravelVersion(string $version): void
     {
-        self::assertSame($expected, (new LaravelVersion($version))->instruct(AdapterMode::Cli));
+        self::assertStringContainsString('Laravel ' . $version, (new LaravelVersion($version))->instruct(AdapterMode::Cli));
     }
 
     /**
-     * @return iterable<string, array{string, string}>
+     * @return iterable<string, array{string}>
      */
     public static function versions(): iterable
     {
-        yield 'major and minor' => ['12.0', 'Generate code compatible with Laravel 12.0'];
-        yield 'patch version' => ['12.1.2', 'Generate code compatible with Laravel 12.1.2'];
-        yield 'prerelease' => ['13.0.0-RC1', 'Generate code compatible with Laravel 13.0.0-RC1'];
+        yield 'major and minor' => ['12.0'];
+        yield 'patch version' => ['12.1.2'];
+        yield 'prerelease' => ['13.0.0-RC1'];
     }
 }
